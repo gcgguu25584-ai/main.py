@@ -5,7 +5,7 @@ import os
 
 # --- إعدادات النظام ---
 TOKEN = os.getenv('BOT_TOKEN')
-ADMIN_ID = "6102641066"
+ADMIN_ID = "8554166258"
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
